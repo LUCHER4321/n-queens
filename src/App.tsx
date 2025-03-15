@@ -1,34 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
+//import reactLogo from './assets/react.svg'
+//import viteLogo from '/vite.svg'
 import './App.css'
+import { Table } from './scripts/Table';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [n, setN] = useState(8);
+  const [start, setStart] = useState(true);
+  const [table, setTable] = useState(new Table(n));
+  const [display, setDisplay] = useState(<Table.Display size={30} table={table}/>);
+  const [solution, setSolution] = useState<string[]>([]);
+  useEffect(() => {
+    const newTable = new Table(n)
+    setTable(newTable);
+    setStart(true);
+    setDisplay(<Table.Display size={30} table={newTable}/>);
+  }, [n])
+
+  const moveTable = async () => {
+    const move = await table.currentQueen.move(start);
+    setDisplay(<Table.Display size={30} table={table}/>);
+    setStart(move.length === 0);
+    setSolution(move);
+    console.log("Result:", move.join(", "));
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="items-center">
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              Número de Reinas:
+            </td>
+            <td className="w-2.5"/>
+            <td>
+              <input type="number" value={n} onChange={(e) => setN(Number(e.target.value))} className="bg-white dark:bg-black"/>
+            </td>
+          </tr>
+          <tr>
+            <td colSpan={3}>
+              <button onClick={moveTable}>
+                {start ? "Empezar" : "Siguiente"}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>{solution.join(", ")}</p>
+      {display}
+    </div>
   )
 }
 
