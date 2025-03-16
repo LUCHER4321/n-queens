@@ -11,15 +11,15 @@ function App() {
   const [display, setDisplay] = useState(<Table.Display size={30} table={table}/>);
   const [solution, setSolution] = useState<string[]>([]);
   useEffect(() => {
-    const newTable = new Table(n)
+    const newTable = new Table(n);
     setTable(newTable);
+    setSolution([]);
     setStart(true);
     setDisplay(<Table.Display size={30} table={newTable}/>);
   }, [n])
 
-  const moveTable = async () => {
-    const move = await table.currentQueen.move(start);
-    setDisplay(<Table.Display size={30} table={table}/>);
+  const moveTable = () => {
+    const move = table.move(() => setDisplay(<Table.Display size={30} table={table}/>));
     setStart(move.length === 0);
     setSolution(move);
     console.log("Result:", move.join(", "));
